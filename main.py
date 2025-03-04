@@ -1,4 +1,4 @@
-from extractor import FileProcessor
+from file_processor import FileProcessor
 from typing import Union, List, Dict
 
 def display_extracted_text(extracted: Dict[str, Union[str, List[str]]]) -> None:
