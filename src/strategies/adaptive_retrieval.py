@@ -12,14 +12,13 @@ from typing import List, Dict, Any
 from langchain.docstore.document import Document
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
-from file_processor import FileProcessor
+from processor.file_processor import FileProcessor
 
 # Load environment variables from a .env file
 load_dotenv()
 
 # Set the OpenAI API key environment variable
-os.environ["OPENAI_API_KEY"] = ""
-
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
 # Define all the required classes and strategies
 class CategoriesOptions(BaseModel):
@@ -217,41 +216,4 @@ class AdaptiveRAG:
         return self.llm_chain.invoke(input_data).content
 
 
-# Argument parsing functions
-def parse_args():
-    import argparse
-    parser = argparse.ArgumentParser(description="Run AdaptiveRAG system.")
-    parser.add_argument('--texts', nargs='+', help="Input texts for retrieval")
-    return parser.parse_args()
 
-
-if __name__ == "__main__":
-    args = parse_args()
-    # texts = args.texts or [
-    #     "The Earth is the third planet from the Sun and the only astronomical object known to harbor life."]
-    root_folder = './data/unprocessed_docs'
-    processor = FileProcessor(root_folder)
-    texts = processor.process_files()
-    combined_texts_list = []
-    
-    for file_path, content in texts.items():
-        # If the file is a PPTX (content is a list of slides)
-        if isinstance(content, list):
-            combined = ""
-            for idx, slide_text in enumerate(content, start=1):
-                combined += f"Slide {idx}:\n{slide_text}\n\n"
-            combined_texts_list.append(combined)
-        else:
-            # For markdown or other file types where content is already a single string
-            combined_texts_list.append(content)
-
-    rag_system = AdaptiveRAG(combined_texts_list)
-
-    queries = [
-        "Tell me about the Cold Bore Technology project we did"
-    ]
-    #
-    for query in queries:
-        print(f"Query: {query}")
-        result = rag_system.answer(query)
-        print(f"Answer: {result}")

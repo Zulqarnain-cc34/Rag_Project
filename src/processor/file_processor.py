@@ -1,9 +1,9 @@
 import os
 import logging
 from typing import Union, List, Dict
-from markdown_extractor import MarkdownExtractor
-from pptx_extractor import PPTXExtractor
-from base_extractor import BaseExtractor
+from .markdown_extractor import MarkdownExtractor
+from .pptx_extractor import PPTXExtractor
+from .base_extractor import BaseExtractor
 
 class FileProcessor:
     """

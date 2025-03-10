@@ -1,7 +1,7 @@
 import logging
 from pptx import Presentation
 from typing import List
-from base_extractor import BaseExtractor
+from .base_extractor import BaseExtractor
 
 class PPTXExtractor(BaseExtractor):
     """Extracts slide-wise text from PowerPoint (.pptx) files."""
