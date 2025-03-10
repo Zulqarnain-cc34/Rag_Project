@@ -1,0 +1,6 @@
+python-pptx
+langchain
+langchain-community
+langchain-core
+langchain-openai
+pydantic

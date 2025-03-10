@@ -14,4 +14,3 @@ class MarkdownExtractor(BaseExtractor):
         except Exception as e:
             logging.error(f"Error reading Markdown file {file_path}: {e}")
             return ""
-

@@ -19,7 +19,7 @@ def display_extracted_text(extracted: Dict[str, Union[str, List[str]]]) -> None:
         print(separator)
 
 def main():
-    root_folder = './unprocessed_docs'
+    root_folder = './data/unprocessed_docs'
     processor = FileProcessor(root_folder)
     extracted = processor.process_files()
     display_extracted_text(extracted)
