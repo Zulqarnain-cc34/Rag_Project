@@ -18,7 +18,7 @@ from file_processor import FileProcessor
 load_dotenv()
 
 # Set the OpenAI API key environment variable
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = ""
 
 
 # Define all the required classes and strategies
