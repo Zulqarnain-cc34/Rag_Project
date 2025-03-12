@@ -14,8 +14,16 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 from processor.file_processor import FileProcessor
 
+from langchain_core.documents import Document
+from langchain_postgres import PGVector
+from langchain_postgres.vectorstores import PGVector
+
 # Load environment variables from a .env file
 load_dotenv()
+
+# See docker command above to launch a postgres instance with pgvector enabled.
+connection = "postgresql+psycopg://langchain:langchain@localhost:6024/langchain"  # Uses psycopg3!
+collection_name = "my_docs"
 
 # Set the OpenAI API key environment variable
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
@@ -58,14 +66,27 @@ class QueryClassifier:
 class BaseRetrievalStrategy:
     def __init__(self, texts):
         self.embeddings = OpenAIEmbeddings()
-        text_splitter = CharacterTextSplitter(chunk_size=800, chunk_overlap=0)
+        text_splitter = CharacterTextSplitter(chunk_size=1600, chunk_overlap=0)
         self.documents = text_splitter.create_documents(texts)
-        print(self.documents)
-        self.db = FAISS.from_documents(self.documents, self.embeddings)
+        # Add a dummy metadata field to each document
+        i=0
+        for doc in self.documents:
+            i+=1
+            doc.metadata["id"] = i
+        
+        self.vector_store = PGVector(
+            embeddings=self.embeddings,
+            collection_name=collection_name,
+            connection=connection,
+            use_jsonb=True,
+        )
+
+        # Add documents to the vector store with their respective IDs
+        self.vector_store.add_documents(self.documents, ids=[doc.metadata["id"] for doc in self.documents])
         self.llm = ChatOpenAI(temperature=0, model_name="gpt-4o", max_tokens=4000)
 
     def retrieve(self, query, k=4):
-        return self.db.similarity_search(query, k=k)
+        return self.vector_store.similarity_search(query, k=k)
 
 
 class FactualRetrievalStrategy(BaseRetrievalStrategy):
@@ -79,7 +100,7 @@ class FactualRetrievalStrategy(BaseRetrievalStrategy):
         enhanced_query = query_chain.invoke(query).content
         print(f'Enhanced query: {enhanced_query}')
 
-        docs = self.db.similarity_search(enhanced_query, k=k * 2)
+        docs = self.vector_store.similarity_search(enhanced_query, k=k * 2)
 
         ranking_prompt = PromptTemplate(
             input_variables=["query", "doc"],
@@ -112,7 +133,7 @@ class AnalyticalRetrievalStrategy(BaseRetrievalStrategy):
 
         all_docs = []
         for sub_query in sub_queries:
-            all_docs.extend(self.db.similarity_search(sub_query, k=2))
+            all_docs.extend(self.vector_store.similarity_search(sub_query, k=2))
 
         diversity_prompt = PromptTemplate(
             input_variables=["query", "docs", "k"],
@@ -140,7 +161,7 @@ class OpinionRetrievalStrategy(BaseRetrievalStrategy):
 
         all_docs = []
         for viewpoint in viewpoints:
-            all_docs.extend(self.db.similarity_search(f"{query} {viewpoint}", k=2))
+            all_docs.extend(self.vector_store.similarity_search(f"{query} {viewpoint}", k=2))
 
         opinion_prompt = PromptTemplate(
             input_variables=["query", "docs", "k"],
@@ -167,7 +188,7 @@ class ContextualRetrievalStrategy(BaseRetrievalStrategy):
         contextualized_query = context_chain.invoke(input_data).content
         print(f'Contextualized query: {contextualized_query}')
 
-        docs = self.db.similarity_search(contextualized_query, k=k * 2)
+        docs = self.vector_store.similarity_search(contextualized_query, k=k * 2)
 
         ranking_prompt = PromptTemplate(
             input_variables=["query", "context", "doc"],
@@ -210,7 +231,7 @@ class AdaptiveRAG:
 
     def answer(self, query: str) -> str:
         category = self.classifier.classify(query)
-        strategy = self.strategies[category]
+        strategy = self.strategies['Contextual']
         docs = strategy.retrieve(query)
         input_data = {"context": "\n".join([doc.page_content for doc in docs]), "question": query}
         return self.llm_chain.invoke(input_data).content
