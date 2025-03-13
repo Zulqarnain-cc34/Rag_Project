@@ -1,6 +1,7 @@
 import logging
 from .base_extractor import BaseExtractor
 
+
 class MarkdownExtractor(BaseExtractor):
     """Extracts text from Markdown (.md) files."""
 

@@ -1,6 +1,15 @@
-processed_docs
-unprocessed_docs
-urls.txt
-miro.txt
-.env
-data
+# Environment files
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.venv
+.idea/
+.DS_Store
+
+# Data
+apps/backend/src/data/*

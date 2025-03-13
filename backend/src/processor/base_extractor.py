@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Union, List
 
+
 class BaseExtractor(ABC):
     """
     Abstract base class for file extractors.
@@ -14,3 +15,4 @@ class BaseExtractor(ABC):
         Must be implemented by subclasses.
         """
         pass
+

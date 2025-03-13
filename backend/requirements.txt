@@ -1,8 +1,9 @@
 python-pptx
-python-dotenv
 langchain
 langchain-community
 langchain-core
 langchain-openai
 pydantic
+python-dotenv
 langchain-postgres
+

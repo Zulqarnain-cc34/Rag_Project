@@ -5,6 +5,7 @@ from .markdown_extractor import MarkdownExtractor
 from .pptx_extractor import PPTXExtractor
 from .base_extractor import BaseExtractor
 
+
 class FileProcessor:
     """
     Processes files within a root folder and extracts text content

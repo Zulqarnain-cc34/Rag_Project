@@ -3,6 +3,7 @@ from pptx import Presentation
 from typing import List
 from .base_extractor import BaseExtractor
 
+
 class PPTXExtractor(BaseExtractor):
     """Extracts slide-wise text from PowerPoint (.pptx) files."""
 
@@ -23,3 +24,4 @@ class PPTXExtractor(BaseExtractor):
         except Exception as e:
             logging.error(f"Error reading PPTX file {file_path}: {e}")
             return []
+
