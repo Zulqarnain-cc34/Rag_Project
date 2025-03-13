@@ -12,7 +12,7 @@ This project implements an Retrieval-Augmented Generation (RAG) system that proc
 
 - **Built with Modern Tools**:
   - **LangChain**: For prompt handling, chaining, and LLM integrations.
-  - **FAISS**: For vector-based similarity search.
+  - **Pg_vector**: For vector-based similarity search.
   - **OpenAI Models**: For text generation and embedding.
   - **Pydantic**: For structured data validation.
 
@@ -27,7 +27,7 @@ This project implements an Retrieval-Augmented Generation (RAG) system that proc
 2. **Document Creation & Embedding**:
    - Extracted text is split into manageable chunks.
    - Each chunk is converted to embeddings using OpenAI embeddings.
-   - A FAISS index is built for efficient similarity searches.
+   - A pg_vector index is built for efficient similarity searches.
 
 3. **Retrieval**:
    - The system invokes the retrieval strategy specified.
@@ -44,20 +44,27 @@ This project implements an Retrieval-Augmented Generation (RAG) system that proc
 - Environment variables set for OpenAI API (see `.env` file)
 - Required Python packages:
   - `langchain`, `langchain_openai`, `langchain_core`
-  - `faiss-cpu`
+  - `langchain-postgres`
   - `pydantic`
   - `python-dotenv`
   - `pptx` (for processing PowerPoint files)
 
 ---
 
+## Setting up PG_Vector 
+
+You can run the following command to spin up a a postgres container with the pgvector extension:
+
+        docker run --name pgvector-container -e POSTGRES_USER=langchain -e POSTGRES_PASSWORD=langchain -e POSTGRES_DB=langchain -p 6024:5432 -d pgvector/pgvector:pg16
+
+
 ## Setup
 
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/{username}/adaptive-rag.git
-   cd adaptive-rag
+   git clone https://github.com/Umbrage-Studios/umbrage-rag.git
+   cd umbrage-rag
    ```
 
 2. **Create and Configure Environment Variables**
@@ -176,4 +183,4 @@ This project implements an Retrieval-Augmented Generation (RAG) system that proc
 
 ---
 
-Happy coding and exploring RAG!
+Happy coding and creating umbrage Slack RAG Bot!
