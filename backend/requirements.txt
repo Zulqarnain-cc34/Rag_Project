@@ -6,4 +6,5 @@ langchain-openai
 pydantic
 python-dotenv
 langchain-postgres
+langchain_experimental
 
