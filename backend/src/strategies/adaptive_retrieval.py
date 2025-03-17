@@ -16,7 +16,7 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.prompts import PromptTemplate
 from langchain_core.retrievers import BaseRetriever
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Annotated
 from langchain.docstore.document import Document
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
@@ -25,6 +25,7 @@ from langchain_core.documents import Document  # Note: Duplicate import, ensure 
 from langchain_postgres import PGVector
 from langchain_experimental.text_splitter import SemanticChunker
 from langchain_postgres.vectorstores import PGVector
+from .agentic_chunker import AgenticChunker
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -186,13 +187,16 @@ class BaseRetrievalStrategy:
         # Initialize OpenAI embeddings.
         self.embeddings = OpenAIEmbeddings()
         # Split texts into documents with a specific chunk size and overlap.
-        text_splitter = SemanticChunker(
-            OpenAIEmbeddings(), breakpoint_threshold_type="percentile" # "standard_deviation", "interquartile"
-        )
-        self.documents = text_splitter.create_documents(texts)
-
-        # text_splitter = CharacterTextSplitter(chunk_size=1600, chunk_overlap=0)
+        # text_splitter = SemanticChunker(
+        #     OpenAIEmbeddings(), breakpoint_threshold_type="percentile" # "standard_deviation", "interquartile"
+        # )
         # self.documents = text_splitter.create_documents(texts)
+
+        # text_splitter = text_splitter(
+        # self.documents = text_splitter.create_documents(texts)
+        text_splitter = AgenticChunkerTextSplitter()
+        self.documents = text_splitter.agentic_split_text(texts)
+
         print(self.documents)
         # Add a dummy metadata field (an id) to each document.
         for i, doc in enumerate(self.documents, start=1):
