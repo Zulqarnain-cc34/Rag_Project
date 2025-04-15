@@ -23,9 +23,10 @@ This project implements an Retrieval-Augmented Generation (RAG) system that proc
 1. **File Processing & Extraction**:
    - Files in the designated directory (`./data/unprocessed_docs`) are processed.
    - Markdown and PPTX files are parsed using dedicated extractor classes.
+
+2. Agentic Chunking:
    
-2. **Document Creation & Embedding**:
-   - Extracted text is split into manageable chunks.
+3. **Document Creation & Embedding**:
    - Each chunk is converted to embeddings using OpenAI embeddings.
    - A pg_vector index is built for efficient similarity searches.
 

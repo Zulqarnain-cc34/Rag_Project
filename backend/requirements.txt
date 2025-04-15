@@ -1,10 +1,4 @@
 python-pptx
-langchain
-langchain-community
-langchain-core
-langchain-openai
 pydantic
 python-dotenv
-langchain-postgres
-langchain_experimental
-
+phidata 
